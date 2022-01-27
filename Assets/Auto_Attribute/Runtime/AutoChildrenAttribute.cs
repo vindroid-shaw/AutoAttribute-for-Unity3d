@@ -23,13 +23,28 @@ using UnityEngine;
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 public class AutoChildrenAttribute : AutoFamily
 {
-	protected override string GetMethodName()
-	{
-		return "GetComponentsInChildren";
-	}
+    private string _childName = null;
 
-	protected override object GetTheSingleComponent(MonoBehaviour mb, Type componentType)
-	{
-		return mb.GetComponentInChildren(componentType, true);
-	}
+    public AutoChildrenAttribute()
+    {
+    }
+
+    public AutoChildrenAttribute(string childName)
+    {
+        _childName = childName;
+    }
+
+    protected override string GetMethodName()
+    {
+        return "GetComponentsInChildren";
+    }
+
+    protected override object GetTheSingleComponent(MonoBehaviour mb, Type componentType)
+    {
+        if (_childName != null)
+        {
+            return mb.transform.Find(_childName).GetComponent(componentType);
+        }
+        return mb.GetComponentInChildren(componentType, true);
+    }
 }
